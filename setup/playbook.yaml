@@ -1,0 +1,80 @@
+- name: Setup AIPC server
+  hosts: all
+  vars:
+    pkgs:
+    - ansible
+    - ca-certificates 
+    - curl
+  tasks:
+  - name: Test connectivity
+    ping:
+
+  - name: Update system
+    apt:
+      update_cache: yes
+      upgrade: yes
+
+  - name: Add Ansible repository
+    apt_repository:
+      repo: ppa:ansible/ansible
+      state: present
+
+  - name: Install software
+    apt:
+      name: "{{ item }}"
+      state: latest
+      update_cache: yes
+    loop: "{{ pkgs }}"
+
+  - name: create keyring
+    shell:
+      cmd: "install -m 0755 -d /etc/apt/keyrings"
+      creates: "/etc/apt/keyrings"
+
+- name: Install Docker
+  hosts: all
+  vars:
+    docker_pkgs:
+    - docker-ce 
+    - docker-ce-cli 
+    - containerd.io 
+    - docker-buildx-plugin 
+    - docker-compose-plugin
+
+  tasks:
+  - name: download docker key
+    shell:
+      cmd: "curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc"
+
+  - name: change mod
+    shell:
+      cmd: "chmod a+r /etc/apt/keyrings/docker.asc"
+
+  - name: add Docker apt
+    shell:
+      cmd: 'echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null'
+
+  - name: Install docker
+    apt:
+      name: "{{ item }}"
+      state: latest
+      update_cache: yes
+    loop: "{{ docker_pkgs }}"
+
+- name: Create user
+  hosts: all
+  tasks:
+  - name: Create user
+    user:
+      name: fred
+      shell: /bin/bash
+      groups: docker
+      append: yes
+      state: present
+  - name: add ssh key
+    authorized_key:
+      user: fred
+      key: "{{ item }}"
+      state: present
+    with_file:
+    - /home/cmlee/Insync/chukmunnlee@gmail.com/linux/cloud/digitalocean/chuk.pub
