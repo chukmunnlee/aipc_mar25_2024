@@ -1,0 +1,30 @@
+- name: Download file
+  hosts: all 
+  tasks:
+  - name: check if file exists
+    stat:
+      path: /tmp/terraform.zip
+    register: file_info
+  - name: Download terraform
+    get_url:
+      url: https://releases.hashicorp.com/terraform/1.7.5/terraform_1.7.5_linux_amd64.zip
+      dest: /tmp/terraform.zip
+    when: not file_info.stat.exists
+  - name: check if file exists
+    stat:
+      path: /tmp/terraform.zip
+    register: file_info
+  - name: show file_info
+    debug:
+      msg: "AFTER {{ file_info.stat.exists }}"
+  - name: show hostvars
+    debug:
+      msg: "hostvars {{ hostvars['mydroplet']['ansible_user'] }}"
+  - name: show groups
+    debug:
+      msg: "hostvars {{ groups }}"
+  - name: write to a file
+    template:
+      src: template.j2
+      dest: /tmp/template.txt
+    

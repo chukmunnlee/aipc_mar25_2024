@@ -42,15 +42,9 @@ resource docker_container bgg-backend-container {
   count = var.instance_count
   name = "bgg-backend-${count.index}"
   image = docker_image.bgg-backend-image.image_id
-  dynamic ports {
-    for_each = var.ports[count.index]
-    iterator = i
-    content {
-      internal = i.internal_port
-      external = i.external_port
-    }
+  ports {
+    internal = 3000
   }
-
   env = [
     "BGG_DB_USER=root",
     "BGG_DB_PASSWORD=changeit",

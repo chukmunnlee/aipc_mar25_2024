@@ -1,0 +1,48 @@
+- name: Initial test
+  hosts: all
+  tasks:
+  - name: Check connectivity 
+    ping:
+
+- name: Install all required packages
+  hosts: mydroplet
+  tasks:
+  - name: Update apt cache
+    apt:
+      update_cache: true
+  - name: Install nginx package
+    # apt update
+    # apt install nginx
+    apt:
+      name: "{{ item.name }}"
+      state: "{{ item.state }}"
+    loop: "{{ install_pkgs }}"
+
+  # systemctl start nginx
+  # systemctl enable nginx
+  - name: Start nginx
+    systemd_service:
+      name: nginx
+      state: started
+      enabled: true
+
+- name: Install terraform
+  hosts: all
+  tasks:
+  - name: Install terraform 
+    unarchive: 
+      src: https://releases.hashicorp.com/terraform/1.7.5/terraform_1.7.5_linux_amd64.zip
+      dest: /usr/local/bin
+      remote_src: yes
+  - name: create a symlink to /usr/local/terraform
+    file:
+      src: /usr/local/bin/terraform
+      dest: /usr/local/bin/tf 
+      state: link
+  - name: List contents of /usr/local/bin 
+    shell:
+      cmd: 'ls -l /usr/local/bin'
+  - name: List IP address
+    shell:
+      cmd: 'ip addr > /tmp/ipaddr.txt'
+      creates: /tmp/ipaddr.txt

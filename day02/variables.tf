@@ -1,8 +1,3 @@
-variable instance_count {
-   type = number
-   default = 3
-}
-
 variable ssh_pub_key {
    type = string
    default = "chuk"
@@ -11,19 +6,6 @@ variable ssh_pub_key {
 variable ssh_priv_key {
    description = "Path to private key"
    type = string
-}
-
-variable docker_host {
-   type = string
-   default = "aipc"
-}
-variable ports {
-   type = list(
-      object({
-         internal_port = number
-         external_port = number
-      })
-   )
 }
 
 variable DO_image {

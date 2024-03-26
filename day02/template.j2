@@ -1,0 +1,8 @@
+Ansbile user is {{ hostvars['mydroplet']['ansible_user'] }}
+
+-------------------------
+List of packages installed
+{% for pkg in install_pkgs %}
+   name: {{ pkg.name }}
+   state: {{ pkg.state }}
+{% endfor %}
