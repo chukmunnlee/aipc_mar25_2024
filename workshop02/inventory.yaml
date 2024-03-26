@@ -1,0 +1,14 @@
+# Generated on 2024-03-26T07:59:23Z
+
+all:
+  vars:
+    ansible_user: root
+    ansible_connection: ssh
+    ansible_ssh_private_key_file: /opt/tmp/chuk
+    code_server_archive: https://github.com/coder/code-server/releases/download/v4.22.1/code-server-4.22.1-linux-amd64.tar.gz
+    unpacked_directory: code-server-4.22.1-linux-amd64
+    code_server_password: changeit
+    code_server_domain: code-server.159.223.39.254.nip.io
+  hosts:
+    codeserver:
+      ansible_host: 159.223.39.254
