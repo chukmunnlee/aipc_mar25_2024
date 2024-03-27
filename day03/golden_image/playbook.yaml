@@ -1,0 +1,17 @@
+- name: Install Nginx
+  hosts: all
+  tasks:
+  - name: Install nginx
+    apt:
+      name: nginx
+      update_cache: true
+      state: latest
+    register: result
+    until: result.stderr == ""
+    retries: 10
+    delay: 5
+  - name: Enable nginx
+    systemd_service:
+      name: nginx
+      enabled: true
+      state: started
